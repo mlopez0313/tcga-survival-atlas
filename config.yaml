@@ -1,0 +1,167 @@
+# =========================================================================
+# TCGA Multi-Modal Survival Prediction - main configuration
+# =========================================================================
+# Default cohort is TCGA-LUAD (lung adenocarcinoma). To swap to another
+# cancer (e.g. TCGA-BRCA, TCGA-LIHC, TCGA-GBM) just change `project` and the
+# matching dataset URLs under `xena.urls`.
+# =========================================================================
+
+project: TCGA-LUAD          # TCGA project / cohort tag
+seed: 42                    # global random seed
+log_level: INFO
+
+# -------------------------------------------------------------------------
+# Paths (all relative to repo root unless absolute)
+# -------------------------------------------------------------------------
+paths:
+  data_raw: ~/mnt/datapool/tcga_survival/data/raw
+  data_processed: ~/mnt/datapool/tcga_survival/data/processed
+  results: ~/mnt/datapool/tcga_survival/results
+  models: ~/mnt/datapool/tcga_survival/results/models
+  figures: ~/mnt/datapool/tcga_survival/results/figures
+  metrics: ~/mnt/datapool/tcga_survival/results/metrics
+  logs: ~/mnt/datapool/tcga_survival/logs
+
+# -------------------------------------------------------------------------
+# Data source
+#   - Prefer UCSC Xena: harmonized "TCGA Pan-Cancer (PANCAN)" or per-cohort
+#     hub ("https://gdc.xenahubs.net/" / "https://tcga.xenahubs.net/").
+#   - For LUAD the GDC TCGA hub is the most consistent.
+# -------------------------------------------------------------------------
+data_source: gdc            # one of: xena, gdc
+
+xena:
+  hub: https://gdc.xenahubs.net
+  # Each entry is downloaded verbatim. URLs are paired with `filename`
+  # which is what we save them as in data/raw/.
+  # Replace any url with a different cohort's url to swap projects.
+  urls:
+    clinical:
+      url: https://gdc.xenahubs.net/download/TCGA-LUAD.clinical.tsv.gz
+      filename: TCGA-LUAD.clinical.tsv.gz
+    survival:
+      url: https://gdc.xenahubs.net/download/TCGA-LUAD.survival.tsv.gz
+      filename: TCGA-LUAD.survival.tsv.gz
+    rnaseq:
+      url: https://gdc.xenahubs.net/download/TCGA-LUAD.htseq_fpkm.tsv.gz
+      filename: TCGA-LUAD.htseq_fpkm.tsv.gz
+    mutation:
+      url: https://gdc.xenahubs.net/download/TCGA-LUAD.mutect2_snv.tsv.gz
+      filename: TCGA-LUAD.mutect2_snv.tsv.gz
+    cnv:
+      url: https://gdc.xenahubs.net/download/TCGA-LUAD.gistic.tsv.gz
+      filename: TCGA-LUAD.gistic.tsv.gz
+    methylation:
+      url: https://gdc.xenahubs.net/download/TCGA-LUAD.methylation450.tsv.gz
+      filename: TCGA-LUAD.methylation450.tsv.gz
+    mirna:
+      url: https://gdc.xenahubs.net/download/TCGA-LUAD.mirna.tsv.gz
+      filename: TCGA-LUAD.mirna.tsv.gz
+
+gdc:
+  api_endpoint: https://api.gdc.cancer.gov
+  project_id: TCGA-LUAD
+  conda_prefix: ~/mnt/datapool/conda-envs/tcgabiolinks
+
+# -------------------------------------------------------------------------
+# Preprocessing
+# -------------------------------------------------------------------------
+preprocessing:
+  clinical:
+    # Field-name candidates differ between Xena dumps; we look for the first
+    # matching one in each list.
+    columns:
+      patient_id: [submitter_id.samples, _PATIENT, bcr_patient_barcode, sample]
+      age: [age_at_initial_pathologic_diagnosis, age_at_diagnosis.diagnoses, age_at_index.demographic]
+      sex: [gender.demographic, gender]
+      stage: [tumor_stage.diagnoses, ajcc_pathologic_stage, pathologic_stage]
+      smoking: [tobacco_smoking_history, cigarettes_per_day.exposures]
+    drop_missing_target: true   # drop rows with no OS_time/OS_event
+
+  rnaseq:
+    enabled: true
+    log_transform: true         # apply log2(x+1) (skip if data is already log)
+    min_expression: 1.0         # mean expression filter
+    top_variable_genes: 2000
+
+  mutations:
+    enabled: true
+    top_n_genes: 300            # binary matrix limited to top mutated genes
+    require_nonsynonymous: true
+
+  cnv:
+    enabled: true
+    cnv_mode: continuous        # 'continuous' (GISTIC) or 'binary'
+    binary_threshold: 0.3       # used if cnv_mode == 'binary'
+    top_variable_features: 2000
+
+  methylation:
+    enabled: true              # enabled; large file may require long runtime / high RAM
+    max_missing_frac: 0.2       # drop probes with >20% NaN
+    top_variable_probes: 5000
+
+  mirna:
+    log_transform: true
+    top_variable: 200
+
+# -------------------------------------------------------------------------
+# Splitting
+# -------------------------------------------------------------------------
+split:
+  test_size: 0.2
+  stratify_by_event: true
+
+# -------------------------------------------------------------------------
+# Models
+# -------------------------------------------------------------------------
+models:
+  cox_elastic_net:
+    enabled: true
+    l1_ratio: 0.5
+    n_alphas: 50
+    cv_folds: 5
+    feature_set: baseline       # one of: baseline, multimodal, clinical_only
+
+  rsf:
+    enabled: true
+    n_estimators: 300
+    min_samples_split: 10
+    min_samples_leaf: 40
+    max_features: 0.2
+    max_depth: 3
+    feature_set: baseline
+    prefilter_top_k: 1000
+
+  deepsurv:
+    enabled: true
+    feature_set: baseline
+    prefilter_top_k: 1500
+    hidden_layers: [32]
+    dropout: 0.3
+    batch_norm: true
+    lr: 3.0e-4
+    weight_decay: 1.0e-4
+    epochs: 200
+    patience: 25                # early-stopping patience on val loss
+    val_size: 0.2
+    batch_size: 256             # use full batch when smaller than this
+
+  multibranch:
+    enabled: true
+    branch_hidden: [32]
+    branch_embedding: 8
+    fusion_hidden: [64, 32]
+    branch_prefilter_top_k:
+      rna: 1000
+      cnv: 1000
+      methylation: 2000
+    dropout: 0.5
+    lr: 1.0e-3
+    weight_decay: 1.0e-4
+    epochs: 300
+    patience: 30
+    val_size: 0.2
+    batch_size: 256
+    batch_norm: true
+    # which modalities to actually wire in; missing files are skipped silently
+    modalities: [clinical, rna, mutation, cnv, methylation]

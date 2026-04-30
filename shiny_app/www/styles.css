@@ -1,0 +1,374 @@
+/* ============================================================
+ * TCGA Survival Atlas — editorial / scientific theme
+ * Keep the colours below in sync with TCGA_PALETTE in global.R
+ * ============================================================ */
+
+:root {
+  --tcga-ink:        #1f2d3d;
+  --tcga-ink-soft:   #2c3e50;
+  --tcga-muted:      #5a6776;
+  --tcga-muted-2:    #8a95a3;
+  --tcga-rule:       #dfe5ec;
+  --tcga-rule-soft:  #eef2f6;
+  --tcga-bg:         #f7f9fb;
+  --tcga-card-cap:   #f2f5f9;
+  --tcga-accent:     #2c7fb8;
+  --tcga-accent-2:   #1d4f7c;
+  --tcga-tumor:      #c0392b;
+  --tcga-normal:     #2e86ab;
+  --tcga-warn:       #d97706;
+  --tcga-good:       #3a8b6b;
+
+  --shadow-card:     0 1px 2px rgba(20,30,45,0.04),
+                     0 1px 3px rgba(20,30,45,0.03);
+  --radius-card:     10px;
+  --radius-pill:     999px;
+}
+
+/* ----------------------------------------------------- base typography */
+body {
+  background: var(--tcga-bg);
+  color: var(--tcga-ink-soft);
+  font-feature-settings: "ss01", "cv11", "tnum";
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 { color: var(--tcga-ink); letter-spacing: -0.005em; }
+
+a { color: var(--tcga-accent-2); }
+a:hover { color: var(--tcga-accent); text-decoration: underline; }
+
+code, pre, kbd, samp {
+  font-family: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.88em;
+  color: var(--tcga-ink-soft);
+}
+
+/* ----------------------------------------------------- navbar / brand  */
+.brand-mark {
+  background: linear-gradient(135deg, #5d8aa8, #2c7fb8);
+  color: #fff;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  margin-right: 8px;
+  font-size: 0.85rem;
+}
+.brand-name { font-weight: 600; letter-spacing: 0.01em; }
+
+.navbar { box-shadow: 0 1px 0 rgba(0,0,0,0.15); }
+.nav-meta {
+  color: rgba(255,255,255,0.65);
+  font-size: 0.82rem;
+  padding: 6px 10px;
+  text-decoration: none;
+}
+.nav-meta:hover { color: #fff; text-decoration: none; }
+.nav-meta i, .nav-meta svg { margin-right: 3px; }
+
+/* ----------------------------------------------------- page header     */
+.page-header {
+  margin: 0 0 16px;
+  padding: 22px 26px 18px;
+  background: #ffffff;
+  border-bottom: 1px solid var(--tcga-rule);
+  border-radius: 0;
+}
+.page-eyebrow {
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--tcga-muted-2);
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+.page-title {
+  font-weight: 700;
+  letter-spacing: -0.012em;
+  margin: 0 0 4px;
+  color: var(--tcga-ink);
+  font-size: 1.6rem;
+}
+.page-lede {
+  color: var(--tcga-muted);
+  font-size: 1.02rem;
+  line-height: 1.55;
+  margin: 0;
+  max-width: 82ch;
+}
+.lede-accent { color: var(--tcga-accent); font-weight: 600; }
+
+/* ----------------------------------------------------- cards           */
+.card {
+  border: 1px solid var(--tcga-rule);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  background: #fff;
+  overflow: hidden;
+}
+.card-header {
+  background: var(--tcga-card-cap);
+  font-weight: 600;
+  color: var(--tcga-ink);
+  border-bottom: 1px solid var(--tcga-rule);
+  font-size: 0.92rem;
+  letter-spacing: 0.005em;
+  padding: 10px 14px;
+}
+.card-body { padding: 14px 16px; }
+
+/* Scientific "right rail" emphasis card variant */
+.card.right-rail {
+  background: #fbfcfd;
+  border-color: var(--tcga-rule);
+}
+.card.right-rail .card-header {
+  background: #ffffff;
+  color: var(--tcga-accent-2);
+  text-transform: uppercase;
+  font-size: 0.74rem;
+  letter-spacing: 0.12em;
+  padding: 10px 14px;
+  border-bottom: 2px solid var(--tcga-accent);
+}
+.card.right-rail .card-body p { font-size: 0.93rem; line-height: 1.55; }
+
+/* ----------------------------------------------------- value boxes      */
+.bslib-value-box {
+  border-radius: var(--radius-card) !important;
+  border: 1px solid var(--tcga-rule);
+  box-shadow: var(--shadow-card);
+}
+.bslib-value-box .value-box-title {
+  font-weight: 500;
+  color: var(--tcga-muted);
+  letter-spacing: 0.02em;
+  font-size: 0.85rem;
+  text-transform: none;
+}
+.bslib-value-box .value-box-value {
+  font-weight: 700;
+  letter-spacing: -0.012em;
+  font-size: 1.55rem;
+}
+
+/* ----------------------------------------------------- summary lists    */
+.summary-dl {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 6px 18px;
+  font-size: 0.92rem;
+  margin: 0;
+}
+.summary-dl dt {
+  color: var(--tcga-muted);
+  font-weight: 500;
+  border-bottom: 1px dotted var(--tcga-rule);
+  padding-bottom: 1px;
+}
+.summary-dl dd {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+  color: var(--tcga-ink-soft);
+  font-weight: 600;
+  border-bottom: 1px dotted var(--tcga-rule);
+  padding-bottom: 1px;
+}
+
+/* ----------------------------------------------------- status pills     */
+.status-pill {
+  display: inline-block;
+  padding: 2px 9px;
+  border-radius: var(--radius-pill);
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: lowercase;
+  vertical-align: 2px;
+}
+
+/* ----------------------------------------------------- caveats / blocks */
+.caveat-h5 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-top: 0.6rem;
+  color: var(--tcga-ink);
+}
+blockquote {
+  border-left: 3px solid var(--tcga-accent);
+  background: var(--tcga-rule-soft);
+  padding: 10px 14px;
+  font-size: 0.9rem;
+  color: var(--tcga-muted);
+  margin: 8px 0;
+  border-radius: 0 6px 6px 0;
+}
+.interp-list { padding-left: 0; list-style: none; }
+.interp-list li {
+  padding-left: 18px;
+  position: relative;
+  margin-bottom: 8px;
+  color: var(--tcga-ink-soft);
+  line-height: 1.5;
+  font-size: 0.93rem;
+}
+.interp-list li::before {
+  content: "▸";
+  position: absolute; left: 2px; top: 0;
+  color: var(--tcga-accent);
+}
+
+/* ----------------------------------------------------- empty states     */
+.empty-state {
+  padding: 18px 12px;
+  text-align: center;
+  color: var(--tcga-muted);
+}
+.empty-state-icon {
+  display: inline-flex;
+  width: 38px; height: 38px;
+  align-items: center; justify-content: center;
+  background: var(--tcga-rule-soft);
+  color: var(--tcga-muted-2);
+  border-radius: 50%;
+  font-size: 1.1rem;
+  margin-bottom: 6px;
+}
+.empty-state h6 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin: 0 0 4px;
+  color: var(--tcga-ink-soft);
+}
+.empty-state-body {
+  font-size: 0.86rem;
+  margin: 0;
+  max-width: 36ch;
+  margin-left: auto; margin-right: auto;
+  line-height: 1.45;
+}
+
+/* ----------------------------------------------------- next-steps cards */
+.next-step {
+  display: block;
+  padding: 14px 16px;
+  border: 1px solid var(--tcga-rule);
+  border-radius: var(--radius-card);
+  background: #fff;
+  text-decoration: none;
+  color: var(--tcga-ink-soft) !important;
+  transition: all 120ms ease-out;
+  height: 100%;
+}
+.next-step:hover {
+  border-color: var(--tcga-accent);
+  box-shadow: 0 2px 8px rgba(44, 127, 184, 0.15);
+  transform: translateY(-1px);
+  text-decoration: none;
+}
+.next-step .next-step-title {
+  font-weight: 600;
+  color: var(--tcga-ink);
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.next-step .next-step-body {
+  font-size: 0.86rem;
+  color: var(--tcga-muted);
+  margin: 0;
+  line-height: 1.45;
+}
+
+/* ----------------------------------------------------- forms / sidebar  */
+.bslib-sidebar-layout > .sidebar {
+  background: #ffffff;
+  border-right: 1px solid var(--tcga-rule);
+}
+.bslib-sidebar-layout > .sidebar h6 {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--tcga-muted-2);
+  font-size: 0.74rem;
+  margin-top: 8px;
+  margin-bottom: 4px;
+  font-weight: 700;
+}
+.form-control, .form-select {
+  border-color: var(--tcga-rule);
+  background: #fff;
+  font-size: 0.93rem;
+}
+.form-control:focus, .form-select:focus {
+  border-color: var(--tcga-accent);
+  box-shadow: 0 0 0 0.18rem rgba(44,127,184,0.15);
+}
+.form-check-label, .form-label { color: var(--tcga-ink-soft); font-size: 0.9rem; }
+hr { border-top-color: var(--tcga-rule); }
+
+/* download buttons should be discoverable but not dominant */
+.btn-outline-secondary {
+  border-color: var(--tcga-rule);
+  color: var(--tcga-muted) !important;
+  background: #fff;
+}
+.btn-outline-secondary:hover {
+  background: var(--tcga-rule-soft);
+  border-color: var(--tcga-accent);
+  color: var(--tcga-accent-2) !important;
+}
+
+/* ----------------------------------------------------- DT / tables      */
+table.dataTable.compact td,
+table.dataTable.compact th {
+  padding: 5px 10px;
+  font-size: 0.9rem;
+}
+table.dataTable thead th {
+  background: var(--tcga-card-cap);
+  border-bottom: 1px solid var(--tcga-rule);
+  color: var(--tcga-ink);
+  font-weight: 600;
+}
+table.dataTable.stripe tbody tr.odd > * {
+  background-color: rgba(44, 127, 184, 0.025);
+}
+
+/* ----------------------------------------------------- shiny progress   */
+.shiny-progress .progress-bar { background-color: var(--tcga-accent); }
+.shiny-progress .progress-text {
+  color: var(--tcga-ink-soft);
+  background: #fff;
+  border: 1px solid var(--tcga-rule);
+  border-radius: 6px;
+}
+
+/* ----------------------------------------------------- misc             */
+details > summary {
+  cursor: pointer;
+  font-weight: 500;
+  margin: 6px 0 4px;
+  color: var(--tcga-ink);
+}
+details > summary code { color: var(--tcga-muted); font-size: 0.85rem; margin-left: 4px; }
+details[open] > summary { color: var(--tcga-accent-2); }
+
+.text-caption {
+  font-size: 0.83rem;
+  color: var(--tcga-muted-2);
+  font-style: italic;
+}
+.section-rule {
+  border-top: 1px solid var(--tcga-rule);
+  margin: 16px 0 8px;
+}
+
+/* ----------------------------------------------------- responsive tweaks */
+@media (max-width: 992px) {
+  .page-header { padding: 16px 18px 14px; }
+  .page-title  { font-size: 1.3rem; }
+  .page-lede   { font-size: 0.95rem; }
+}

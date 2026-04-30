@@ -1,0 +1,57 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Environment / local state
+.env
+.env.*
+*.local
+
+# Data + results (often large)
+data/raw/*
+data/processed/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+
+results/models/*
+results/figures/*
+results/metrics/*
+!results/models/.gitkeep
+!results/figures/.gitkeep
+!results/metrics/.gitkeep
+
+logs/
+
+# Multi-cohort outputs kept outside Git
+mnt/datapool/
+**/tcga_survival_cohorts/
+**/tcga_survival_cohorts/**
+
+# Shiny app caches and deployment artefacts
+shiny_app/data_cache/
+shiny_app/.Rproj.user/
+shiny_app/rsconnect/
+
+# Serialized model / analysis artefacts
+*.pt
+*.pth
+*.pkl
+*.joblib
+*.rds
+*.rda
+*.RData
+*.parquet
+
+# Archives / exports
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/

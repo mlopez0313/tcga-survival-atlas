@@ -1,0 +1,14 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+*.Rproj
+data_cache/**
+!data_cache/MANIFEST.md
+!data_cache/.gitkeep
+.git
+.gitignore
+*.log
+node_modules
+.venv
+__pycache__
