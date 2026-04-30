@@ -30,6 +30,10 @@ mnt/datapool/
 **/tcga_survival_cohorts/
 **/tcga_survival_cohorts/**
 
+# UUID-like generated/download directories occasionally created by
+# dataset bundles or external tooling; keep source code elsewhere.
+????????-????-????-????-????????????/
+
 # Shiny app caches and deployment artefacts
 shiny_app/data_cache/
 shiny_app/.Rproj.user/
